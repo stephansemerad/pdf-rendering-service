@@ -1,5 +1,5 @@
 import requests, os
-API_KEY = 'i0cgsdYL3hpeOGkoGmA2TxzJ8LbbU1HpbkZo8B3kFG2bRKjx3V'
+API_KEY = 'y42WTaddY2pt7m90tqKW'
 
 # 1. POST /documents
 file_path   = os.path.join(os.getcwd(), 'sample_1.pdf')
