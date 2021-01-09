@@ -17,5 +17,5 @@
 # ------------------------------------------------
 # pip3 install ghostscript -y
 
-sudo apt-get install poppler-utils
-pip3 install pdf2image
+# sudo apt-get install poppler-utils
+# pip3 install pdf2image
