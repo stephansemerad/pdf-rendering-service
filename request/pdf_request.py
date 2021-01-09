@@ -2,48 +2,54 @@ import requests, os
 API_KEY = 'y42WTaddY2pt7m90tqKW'
 
 # 1. POST /documents
+
 file_path   = os.path.join(os.getcwd(), 'sample_1.pdf')
 API_URL     = 'http://138.68.102.253:8080/documents'
 content     =  open(file_path, 'r').read()
-response    = requests.post(API_URL, headers={'api-key': API_KEY}, data=content).json()
+
+files = {'file': open(file_path, 'rb')}
+response    = requests.post(API_URL, headers={'api-key': API_KEY}, files=files)
+print('status: ', response)
+response    = response.json()
 print('response: ', response)
+
+
+# BINARY
+file_path   = os.path.join(os.getcwd(), 'sample_1.pdf')
+API_URL     = 'http://138.68.102.253:8080/documents'
+content     =  open(file_path, 'r').read()
+response    = requests.post(API_URL, headers={'api-key': API_KEY}, data=content)
+print('status: ', response)
+response    = response.json()
+print('response: ', response)
+
 
 
 file_path   = os.path.join(os.getcwd(), 'sample_2.pdf')
 API_URL     = 'http://138.68.102.253:8080/documents'
 content     =  open(file_path).read()
-response    = requests.post(API_URL, headers={'api-key': API_KEY}, data=content).json()
+response    = requests.post(API_URL, headers={'api-key': API_KEY}, data=content)
+print('status: ', response)
+response    = response.json()
 print('response: ', response)
-
-
-import pdfbox
-p = pdfbox.PDFBox()
-file_path   = os.path.join(os.getcwd(), 'sample_2.pdf')
-text = p.extract_text(file_path)
-print(text)
-
-
-import os
-from pdf2image import convert_from_path, convert_from_bytes
-file_path   = os.path.join(os.getcwd(), 'sample_2.pdf')
-images = convert_from_bytes(open(file_path, 'rb').read())
-
-
 
 
 
 file_path   = os.path.join(os.getcwd(), 'sample_1.txt')
 API_URL     = 'http://138.68.102.253:8080/documents'
 content     =  open(file_path, 'r').read()
-response    = requests.post(API_URL, headers={'api-key': API_KEY}, data=content).json()
+response    = requests.post(API_URL, headers={'api-key': API_KEY}, data=content)
+print('status: ', response)
+response    = response.json()
 print('response: ', response)
-
 
 
 # 2. GET /documents/<DOCUMENT_ID>
 DOCUMENT_ID = 'ABC'
 API_URL = 'http://138.68.102.253:8080/documents/' + DOCUMENT_ID
-response = requests.get(API_URL, headers={'api-key': API_KEY}).json()
+response    = requests.post(API_URL, headers={'api-key': API_KEY})
+print('status: ', response)
+response    = response.json()
 print('response: ', response)
 
 
@@ -51,7 +57,9 @@ print('response: ', response)
 DOCUMENT_ID = 'ABC'
 PAGE        = '1'
 API_URL = 'http://138.68.102.253:8080/documents/pages/' + DOCUMENT_ID + '/' + pages
-response = requests.get(API_URL, headers={'api-key': API_KEY}).json()
+response    = requests.post(API_URL, headers={'api-key': API_KEY})
+print('status: ', response)
+response    = response.json()
 print('response: ', response)
 
 
