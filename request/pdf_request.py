@@ -2,12 +2,10 @@ import requests, os
 API_KEY = 'y42WTaddY2pt7m90tqKW'
 
 # 1. POST /documents
-
 file_path   = os.path.join(os.getcwd(), 'sample_1.pdf')
 API_URL     = 'http://138.68.102.253:8080/documents'
 content     =  open(file_path, 'r').read()
-
-files = {'file': open(file_path, 'rb')}
+files = {'file': open(file_path, 'rb'), 'file': open(file_path, 'rb')}
 response    = requests.post(API_URL, headers={'api-key': API_KEY}, files=files)
 print('status: ', response)
 response    = response.json()

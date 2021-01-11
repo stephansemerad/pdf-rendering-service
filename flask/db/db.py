@@ -1,6 +1,15 @@
 import sqlite3, os
 db_path = os.path.join( os.path.dirname(os.path.realpath(__file__)), 'pdf-rendering-service.db' )
 
+def br(value):
+    if value == 'None' or value == None: return 'NULL'
+    try:value = value.decode('utf8')
+    except:value = str(value)
+    value.replace('<','').replace('>','')
+    if value == '' or value ==None:value = 'NULL'
+    else:value ="'"+ value.replace("'","") +"'"
+    return value
+
 def select(sql):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -31,15 +40,13 @@ def update(sql):
 def delete(sql):
     update(sql)
 
-# tables set up from tables.sql
-sql_tables = open (os.path.join( os.path.dirname(os.path.realpath(__file__)), 'tables.sql' ), "r").read()
-sql_tables = sql_tables.split(';')
-for sql in sql_tables:
-    print(sql)
-    print(insert(sql))
+def set_up_db():
+    sql_tables = open (os.path.join( os.path.dirname(os.path.realpath(__file__)), 'tables.sql' ), "r").read()
+    sql_tables = sql_tables.split(';')
+    for sql in sql_tables: insert(sql)
 
 
-
+set_up_db()
 
 
 

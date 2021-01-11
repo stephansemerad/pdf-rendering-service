@@ -6,11 +6,21 @@ sudo apt-get install -y python3-pip
 
 # Linux Stuff
 sudo apt-get install python3-venv -y
-sudo apt-get install poppler-utils
+sudo apt-get install poppler-utils -y
+sudo apt-get install redis -y
+
 
 # Python Stuff
 sudo pip3 install virtualenv
 sudo pip3 install pdf2image
+sudo pip3 install python-magic
+# sudo pip3 install redis
+# sudo pip3 install rq
+
+
+
+sudo pip3 install -U 'dramatiq[rabbitmq, watch]'
+
 
 # App Build Up
 cd flask
