@@ -49,6 +49,16 @@ def set_up_db():
 set_up_db()
 
 
+# sql = '''
+#         select pdf_id, filename, status, created_at, job_id, enqueued_at, processed_at,
+#         (select count(1) from imgs where imgs.pdf_id = pdf_id)
+#         from pdfs
+#         order by created_at
+#         limit 5
+# '''
+# data = select(sql)
+# print(data)
+
 
 
 

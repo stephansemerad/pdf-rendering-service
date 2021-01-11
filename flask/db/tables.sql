@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS pdfs
     filename TEXT NOT NULL,
     status TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    enqueued_at DATETIME 
+    job_id TEXT, 
+    enqueued_at DATETIME, 
     processed_at DATETIME
 )
 ;

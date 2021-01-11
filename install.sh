@@ -4,33 +4,61 @@ sudo apt-get upgrade -y
 sudo apt-get dist-upgrade -y
 sudo apt-get install -y python3-pip
 
-# Linux Stuff
-sudo apt-get install python3-venv -y
-sudo apt-get install poppler-utils -y
-sudo apt-get install redis -y
+# # Linux Stuff
+# sudo apt-get install poppler-utils -y
+# sudo apt-get install redis -y
 
-
-# Python Stuff
-sudo pip3 install virtualenv
-sudo pip3 install pdf2image
-sudo pip3 install python-magic
+# # Python Local Stuff
+# sudo pip3 install virtualenv
+# sudo pip3 install pdf2image
+# sudo pip3 install python-magic
 # sudo pip3 install redis
 # sudo pip3 install rq
 
 
-
-sudo pip3 install -U 'dramatiq[rabbitmq, watch]'
-
-
 # App Build Up
-cd flask
+# ----------------------------------------------------------------------
+
+cd /pdf-rendering-service/flask
+sudo apt-get install python3-venv -y
 python3 -m venv env
 source env/bin/activate
-sudo pip3 install flask
-sudo pip3 install pdf2image
+sudo apt-get install poppler-utils -y
+sudo apt-get install redis -y
+sudo apt-get install uwsgi -y
+
+pip3 install flask
+pip3 install uwsgi
+pip3 install pdf2image
+pip3 install python-magic
+pip3 install redis
+pip3 install rq
+
+deactivate
+cd /pdf-rendering-service
+
+
+
+# Services
+# ----------------------------------------------------------------------
+
+sudo cp /pdf-rendering-service/flask/services/app.service /etc/systemd/system/app.service
+sudo cp /pdf-rendering-service/flask/services/rqworker.service /etc/systemd/system/rqworker.service
+sudo service app start
+sudo service rqworker stars
+sudo systemctl daemon-reload
+sudo service app restart
+sudo service rqworker restart
+echo 'Completed Services'
+sudo service app status
+sudo service rqworker status
+
+# Docker Stuff
+# ----------------------------------------------------------------------
 
 sudo rm -r Dockerfile
 sudo rm -r .dockerignore
+
 
 touch .dockerignore
 echo "env/

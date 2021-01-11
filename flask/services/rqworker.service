@@ -1,0 +1,15 @@
+[Unit]
+Description=RQ Worker
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/pdf-rendering-service/flask
+ExecStart=/pdf-rendering-service/flask/env/bin/rqworker
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

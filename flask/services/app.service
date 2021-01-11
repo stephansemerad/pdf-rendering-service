@@ -1,0 +1,12 @@
+[Unit]
+Description=app
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/pdf-rendering-service/flask
+Environment="PATH=/pdf-rendering-service/flask/env/bin/ "
+ExecStart=/pdf-rendering-service/flask/env/bin/uwsgi --enable-threads --http-socket :80 --module wsgi:api --processes 10
+
+[Install]
+WantedBy=multi-user.target
