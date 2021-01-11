@@ -42,34 +42,43 @@ def index():
             <th scope="col">pdf_id</th>
             <th scope="col">filename</th>
             <th scope="col">status</th>
-            <th scope="col">received_at</th>
             <th scope="col">job_id</th>
+            <th scope="col">received_at</th>
             <th scope="col">enqueued_at</th>
             <th scope="col">processed_at</th>
+            <th scope="col">img_count</th>
         </tr>
     </thead>
     <tbody>
     '''
     
     sql = '''
-        select pdf_id, filename, status, created_at, job_id, enqueued_at, processed_at,
-        (select count(1) from imgs where imgs.pdf_id = pdf_id)
+        select pdf_id
+              , filename
+              , status
+              , job_id
+              , created_at
+              , enqueued_at
+              , processed_at
+              , created_at - processed_at as processing_time
+              ,(select count(1) from imgs where imgs.pdf_id = pdfs.pdf_id) as img_count
         from pdfs
-        order by created_at
+        order by created_at desc
         limit 5
     '''
     data = select(sql)
 
-    for pdf_id, filename, status, created_at, job_id, enqueued_at, processed_at, img_count in data:
+    for pdf_id, filename, status, job_id, created_at, enqueued_at, processed_at, processing_time, img_count in data:
         table += '''
             <tr>
-                <th scope="row">'''+str('pdf_id')+'''</th>
+                <th scope="row">'''+str(pdf_id)+'''</th>
                 <td>'''+str(filename)+'''</td>
                 <td>'''+str(status)+'''</td>
-                <td>'''+str(created_at)+'''</td>
                 <td>'''+str(job_id)+'''</td>
+                <td>'''+str(created_at)+'''</td>
                 <td>'''+str(enqueued_at)+'''</td>
                 <td>'''+str(processed_at)+'''</td>
+                <td>'''+str(img_count)+'''</td>
             </tr>
             <tr>
         '''   
@@ -80,39 +89,39 @@ def index():
 
     return render_template('index.html', q_len=str(len(q)), table = Markup(table))
 
-# Queue 
-# ----------------------------------------------------------------------------------------------
-@api.route('/redis_q', methods=['GET'])
-def redis_q(): 
-    registry = StartedJobRegistry('default', connection=redis_conn)
-    running_job_ids = registry.get_job_ids()  # Jobs which are exactly running. 
-    expired_job_ids = registry.get_expired_job_ids() 
-    return 'result. '+ str(running_job_ids)+ ' | ' +str(expired_job_ids) + ' | ' + str(q) + ' | ' +str(len(q))
+# # Queue 
+# # ----------------------------------------------------------------------------------------------
+# @api.route('/redis_q', methods=['GET'])
+# def redis_q(): 
+#     registry = StartedJobRegistry('default', connection=redis_conn)
+#     running_job_ids = registry.get_job_ids()  # Jobs which are exactly running. 
+#     expired_job_ids = registry.get_expired_job_ids() 
+#     return 'result. '+ str(running_job_ids)+ ' | ' +str(expired_job_ids) + ' | ' + str(q) + ' | ' +str(len(q))
   
-@api.route('/add_q', methods=['GET'])
-def add_q(): 
-    for i in range(500):
-        job = q.enqueue(background_task, '0')
+# @api.route('/add_q', methods=['GET'])
+# def add_q(): 
+#     for i in range(500):
+#         job = q.enqueue(background_task, '0')
 
-    q_len = len(q)
-    return (f'task {job.id} added to queat at {job.enqueued_at}. {q_len} tasks in queue')
+#     q_len = len(q)
+#     return (f'task {job.id} added to queat at {job.enqueued_at}. {q_len} tasks in queue')
 
 
-# Reset
-# ----------------------------------------------------------------------------------------------
-@api.route('/reset', methods=['GET'])
-def reset(): 
-    try:
-        for FOLDER in FOLDERS: 
-            for file in [f for f in listdir(FOLDER) if isfile(join(FOLDER, f))]:  os.remove(os.path.join(FOLDER, file))
-        for TABLE in TABLES: update('''drop table '''+TABLE+'''; ''')
+# # Reset
+# # ----------------------------------------------------------------------------------------------
+# @api.route('/reset', methods=['GET'])
+# def reset(): 
+#     try:
+#         for FOLDER in FOLDERS: 
+#             for file in [f for f in listdir(FOLDER) if isfile(join(FOLDER, f))]:  os.remove(os.path.join(FOLDER, file))
+#         for TABLE in TABLES: update('''drop table '''+TABLE+'''; ''')
     
-        sql_tables = open (os.path.join( os.path.dirname(os.path.realpath(__file__)), 'db/tables.sql' ), "r").read().split(';')
-        for sql in sql_tables: insert(sql)
+#         sql_tables = open (os.path.join( os.path.dirname(os.path.realpath(__file__)), 'db/tables.sql' ), "r").read().split(';')
+#         for sql in sql_tables: insert(sql)
 
-        return api.response_class(response=json.dumps({"OK": "200 - Everything was reset"}),status=200,mimetype='application/json')
-    except Exception as e:
-        return api.response_class(response=json.dumps({"error":"500  - Internal Server Error "}),status=500,mimetype='application/json')
+#         return api.response_class(response=json.dumps({"OK": "200 - Everything was reset"}),status=200,mimetype='application/json')
+#     except Exception as e:
+#         return api.response_class(response=json.dumps({"error":"500  - Internal Server Error "}),status=500,mimetype='application/json')
 
 
 @api.route('/documents',methods = ['POST', 'GET'])
@@ -131,15 +140,14 @@ def documents(document_id='', number=''):
     if 'api-key' in request.headers:
         api_key = request.headers['api-key']
     else:
-        if 'api-key' not in request.args:
+        if 'api-key' in request.args:
             api_key = request.args['api-key']
         else:
             json_data = {"error":"401 - Unauthorized - API Key not received in Header or as URL parameter"}
             return api.response_class(response=json.dumps(json_data),status=401,mimetype='application/json')
 
     if api_key != '':
-        print(request.headers['api-key'])
-        sql = '''select api_key from api_keys where api_key = '''+br(request.headers['api-key'])+''';'''
+        sql = '''select api_key from api_keys where api_key = '''+br(api_key)+''';'''
         data = select(sql)
         if data ==[]:
             print('API Key is not Ok')
@@ -212,10 +220,48 @@ def documents(document_id='', number=''):
                 return Response("Accepted", status=202  )
             elif request.method == 'GET':
                 print('request.method GET')
-                return Response("OK", status=200 )
-                sql = '''select * from pdfs'''
-                data = select(sql)
-                print(data)
+
+                print('document_id: ', document_id)
+                print('number: ', number)
+
+                if document_id == '':
+                    json_data = {"error":"400 - Missing Document ID"}
+                    return api.response_class(response=json.dumps(json_data),status=400,mimetype='application/json')
+                else:
+
+                    if number =='':
+                        sql = '''
+                            select status
+                                    ,(select count(1) from imgs where imgs.pdf_id = pdfs.pdf_id) as img_count
+                            from pdfs
+                            where pdf_id = '''+br(document_id)+'''
+                        '''
+                        data = select(sql)
+                        if data ==[]:
+                            json_data = {"error":"400 - Document ID not found"}
+                            return api.response_class(response=json.dumps(json_data),status=400,mimetype='application/json')
+                        else:
+                            status, img_count = data[0][0], data[0][1]
+                            json_data =  {'status': status, 'n_pages': img_count}
+                            return api.response_class(response=json.dumps(json_data),status=200,mimetype='application/json')
+                    else:
+                        
+                      
+                        # img_count = data[0][1]
+                        # if int(number) <= int(img_count):
+
+
+
+
+
+
+                            img_path = str()
+                            IMGS_DIRECTORY
+
+                            return render_template('img.html', img_path = img_path)
+
+
+
 
             else:
                 json_data = {"error":"400 - Bad Request"}

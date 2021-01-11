@@ -22,7 +22,7 @@
                <hr>
             </div>
 
-            <div class="col-12">
+            <div class="col-6">
                <h2 style="font-weight:bold" class="mb-3">REST API endpoints:</h2>
                <p>Target was to create an API that converts PDFs into images for further processing</p>
                <p style="color:magenta" class="mb-2">1. POST /documents</p>
@@ -44,6 +44,18 @@
                   <li>GET /documents/&lt;DOCUMENT_ID>/page/&lt;NUMBER></li>
                </ul>
             </div>
+
+            <div class="col-6">
+              <h2 style="font-weight:bold" class="mb-3">Last 5 received PDF's </h2>
+              <p style="color:magenta" class="mb-2">   In the Queue: {{q_len}}</p>
+              {{table}}
+           </div>
+
+           <div class="col-12">
+             <hr>
+           </div>
+
+
             <div class="col-12">
                <h2 style="font-weight:bold" class="mb-3">Python 3.8.X Examples</h2>
                <p style="color:magenta" class="mb-2">   1. POST /documents</p>
@@ -67,24 +79,31 @@ API_KEY     = 'y42WTaddY2pt7m90tqKW'
 DOCUMENT_ID = '1'
 API_URL     = 'http://138.68.102.253:80/documents/' + DOCUMENT_ID
 response    = requests.get(API_URL, headers={'api-key': API_KEY})
-response    = response.json()
 print('response: ', response)
 print('response: ', response.json())
+
+or 
+
+http://138.68.102.253/documents/1?api-key=y42WTaddY2pt7m90tqKW
+
                 </code>
               </pre>
                <p style="color:magenta" class="mb-2">3. GET /documents/&lt;DOCUMENT_ID>/pages/&lt;NUMBER></p>
                <pre>
                 <code class="language-python hljs">
-# 3. GET  /documents/<DOCUMENT_ID>/pages/<NUMBER>
+# 3. GET  /documents/&lt;DOCUMENT_ID>/pages/&lt;NUMBER>
+API_KEY     = 'y42WTaddY2pt7m90tqKW'
+DOCUMENT_ID = '1'
+NUMBER      = '1'
+
+http://138.68.102.253/documents/1/pages/1?api-key=y42WTaddY2pt7m90tqKW
+
+
                 </code>
               </pre>
             </div>
 
-            <div class="col-12">
-              <h2 style="font-weight:bold" class="mb-3">Last 5 received PDF's </h2>
-              <p style="color:magenta" class="mb-2">   In the Queue: {{q_len}}</p>
-              {{table}}
-           </div>
+
 
          </div>
       </div>

@@ -11,7 +11,6 @@ def background_task(pdf_id):
     print(background_task)
     print('pdf_id', pdf_id)
     try:
-        time.sleep(2)
         print('/n[background_task]')
         print('pdf_id: ', pdf_id)
         data = select('''select filename, status from pdfs where pdf_id = '''+br(pdf_id)+''' -- and status ='processing' ;''')
