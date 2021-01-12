@@ -1,32 +1,58 @@
+# Install Centos
+# First you need the image
+# sudo apt-get install docker -y
+# snap install docker
+# docker pull centos # Replace for Ubuntu
+# docker run -d -t --name cantcontainmyself centos
+# docker ps
+# docker exec -it cantcontainmyself bash
+
+# docker pull alpine # Replace for Ubuntu
+# docker run -d -t --name ohyeah alpine
+# docker exec -it ohyeah sh
+
+
+# docker pull thenetworkchuck/nccoffee:frenchpress
+# # [host_port:docker_container]
+# # docker -p [Port] -- [Name of the Container] [IMG name or Distro]
+# docker run -d -t -p 80:80 --name nccoffee thenetworkchuck/nccoffee:frenchpress
+# docker stop nccoffee
+# docker stats
+
+# Install Alpine
+
+# Mistery think
+
+
+sudo apt-get install docker-compose 
+
+
+
 # Updating Stuff
+# ----------------------------------------------------------------------
 sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-get dist-upgrade -y
-sudo apt-get install -y python3-pip
 
-# # Linux Stuff
-# sudo apt-get install poppler-utils -y
-# sudo apt-get install redis -y
-
-# # Python Local Stuff
-# sudo pip3 install virtualenv
-# sudo pip3 install pdf2image
-# sudo pip3 install python-magic
-# sudo pip3 install redis
-# sudo pip3 install rq
-
-
-# App Build Up
+# Virtual Environment Set Up
 # ----------------------------------------------------------------------
-
-cd /pdf-rendering-service/flask
+sudo apt-get install -y python3-pip
 sudo apt-get install python3-venv -y
+
+# Packages installation into Virtual env
+# ----------------------------------------------------------------------
+cd /pdf-rendering-service/flask
 python3 -m venv env
 source env/bin/activate
+
+# Linux Packs
+# ----------------------------------------------------------------------
 sudo apt-get install poppler-utils -y
 sudo apt-get install redis -y
 sudo apt-get install uwsgi -y
 
+# Python Packs
+# ----------------------------------------------------------------------
 pip3 install flask
 pip3 install uwsgi
 pip3 install pdf2image
@@ -37,11 +63,8 @@ pip3 install rq
 deactivate
 cd /pdf-rendering-service
 
-
-
-# Services
+# Create and Run the Services
 # ----------------------------------------------------------------------
-
 sudo cp /pdf-rendering-service/flask/services/app.service /etc/systemd/system/app.service
 sudo cp /pdf-rendering-service/flask/services/rqworker.service /etc/systemd/system/rqworker.service
 sudo service app start

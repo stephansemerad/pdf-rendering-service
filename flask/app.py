@@ -31,7 +31,9 @@ TABLES                      = ['pdfs', 'api_keys', 'imgs']
 
 # Index Page
 # ----------------------------------------------------------------------------------------------
-api = Flask(__name__)
+api = Flask(__name__, template_folder="templates", static_folder="files", static_url_path="/files")
+
+
 @api.route('/', methods=['GET'])
 @api.route('/help', methods=['GET'])
 def index(): 
@@ -245,24 +247,14 @@ def documents(document_id='', number=''):
                             json_data =  {'status': status, 'n_pages': img_count}
                             return api.response_class(response=json.dumps(json_data),status=200,mimetype='application/json')
                     else:
-                        
-                      
-                        # img_count = data[0][1]
-                        # if int(number) <= int(img_count):
-
-
-
-
-
-
-                            img_path = str()
-                            IMGS_DIRECTORY
-
+                        img_path = f'/pdf-rendering-service/flask/files/imgs/{document_id}_{number}.png'
+                        if not os.path.isfile(img_path):
+                            print ("File exist")
+                            json_data = {"error":"400 - Page not Found"}
+                            return api.response_class(response=json.dumps(json_data),status=400,mimetype='application/json')
+                        else:
+                            img_path = f'/files/imgs/{document_id}_{number}.png'
                             return render_template('img.html', img_path = img_path)
-
-
-
-
             else:
                 json_data = {"error":"400 - Bad Request"}
                 return api.response_class(response=json.dumps(json_data),status=400,mimetype='application/json')
